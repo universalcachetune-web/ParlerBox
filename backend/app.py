@@ -109,5 +109,13 @@ def subscribe():
 def subscribe_page():
     return send_from_directory('static', 'index.html')
 
+@app.route('/demo')
+def demo_page():
+    return send_from_directory('static', 'demo.html')
+
+@app.route('/seeking-a-co-founder')
+def co_founder_page():
+    return send_from_directory('static', 'co-founder.html')
+
 if __name__ == '__main__':
     app.run(debug=False, port=5000)
