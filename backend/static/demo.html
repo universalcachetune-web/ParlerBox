@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParlerBox Demo - Chat with Your Data</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMHNTQY50Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-WMHNTQY50Q');
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f23 100%);
+            background-image: url('/image1.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #ffffff;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(79, 195, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(244, 67, 54, 0.05) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundShift {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-image {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .swiss-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .hero-section {
+            text-align: center;
+            color: white;
+            padding: 6rem 2rem 2rem;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+
+            to {
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.6);
+            }
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .demo-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 80vh;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-right: 2px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #6c757d;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .upload-area:hover {
+            border-color: #4FC3F7;
+            background: rgba(79, 195, 247, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-color: #4FC3F7;
+            background: rgba(79, 195, 247, 0.2);
+            transform: scale(1.02);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #4FC3F7;
+        }
+
+        .file-list {
+            flex-grow: 1;
+        }
+
+        .file-item {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .file-item i {
+            margin-right: 0.5rem;
+            color: #4FC3F7;
+        }
+
+        .file-item .file-name {
+            flex-grow: 1;
+            font-weight: 500;
+        }
+
+        .file-item .remove-btn {
+            cursor: pointer;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: #fafafa;
+            max-height: 70vh;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            animation: messageAnimation 0.5s ease;
+        }
+
+        @keyframes messageAnimation {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message-text {
+            display: inline-block;
+            max-width: 80%;
+            padding: 1rem 1.5rem;
+            border-radius: 18px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .message.user .message-text {
+            background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+            color: white;
+        }
+
+        .message.assistant .message-text {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .typing-indicator {
+            display: inline-block;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .chat-input-container {
+            padding: 2rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex-grow: 1;
+            min-height: 50px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            outline: none;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            border-color: #4FC3F7;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 15%;
+            animation-delay: -2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            bottom: 15%;
+            left: 20%;
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Call to Action Section - matching main site subscribe section */
+        .cta-section {
+            background-color: rgba(79, 195, 247, 0.1);
+            border-radius: 16px;
+            margin: 2rem 0;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        .cta-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .cta-content>p {
+            font-size: 1.125rem;
+            color: #e0e0e0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-form {
+            max-width: 500px;
+            margin: 0 auto 3rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .cta-input {
+            flex: 1;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .cta-input::placeholder {
+            color: #cccccc;
+        }
+
+        .cta-button {
+            background-color: #4FC3F7;
+            color: #1E1E2F;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #29B6F6;
+            transform: translateY(-2px);
+        }
+
+        .cta-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit {
+            text-align: center;
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .benefit h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit p {
+            font-size: 1rem;
+            color: #cccccc;
+        }
+
+        .cta-message {
+            margin: 1rem 0 0;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .cta-message.success {
+            color: #4caf50;
+        }
+
+        .cta-message.error {
+            color: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .sidebar {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .demo-container {
+                height: 90vh;
+            }
+
+            .chat-messages {
+                max-height: 50vh;
+            }
+
+            .cta-section {
+                padding: 2rem 1rem;
+            }
+
+            .cta-content h2 {
+                font-size: 2rem;
+            }
+
+            .cta-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="logo">
+            <img src="/logo.webp" alt="ParlerBox Logo" class="logo-image">
+            ParlerBox
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/#subscribe">Subscribe</a>
+            <a href="/" onclick="history.back(); return false;">← Back to Site</a>
+            <div class="swiss-badge">
+                <i class="fas fa-map-marker-alt"></i>
+                Engineered in Switzerland
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero-section">
+            <h1>ParlerBox Demo</h1>
+            <p>Upload a document and ask questions just like you're talking to an AI that knows your data!</p>
+            <p style="font-size: 1rem; margin-top: 1rem; opacity: 0.8;"> This demo is designed to give you a taste of
+                the user experience of secure, private AI — where your data stays fully within your firewall. Please
+                note: this is only a simulation. The full power, speed, and security of ParlerBox can only be realized
+                once it is installed and connected to your own infrastructure.</p>
+        </div>
+
+        <div class="demo-container">
+            <div class="sidebar">
+                <h2 class="sidebar-title">
+                    <i class="fas fa-file-upload"></i>
+                    Upload Documents
+                </h2>
+
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p><strong>Drag & drop files here</strong></p>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.txt,.doc,.docx,.md">
+                </div>
+
+                <div class="file-list" id="fileList">
+                    <p style="color: #6c757d; font-size: 0.9rem;"><em>No files uploaded yet</em></p>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message assistant">
+                        <div class="message-text">
+                            <strong>ParlerBox Assistant</strong><br>
+                            👋 Hello! I'm your data assistant. Upload a document and ask me any questions about its
+                            content!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input">
+                        <textarea class="message-input" id="messageInput"
+                            placeholder="Ask me anything about your uploaded documents..." rows="1"></textarea>
+                        <button class="send-btn" id="sendBtn" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action Section - matching main site subscribe section -->
+        <section class="cta-section">
+            <div class="section-container">
+                <h2>If You Like What You See</h2>
+                <p>Get ParlerBox deployed in your organization and start exploring your data securely.</p>
+
+                <form class="cta-form" id="contactForm" onsubmit="submitContactForm(event)">
+                    <input type="email" id="ctaEmail" class="cta-input" placeholder="Enter your email address"
+                        required />
+                    <button type="submit" id="ctaSubmitBtn" class="cta-button">
+                        Contact Us
+                    </button>
+                </form>
+                <div id="ctaMessage" class="cta-message" style="display: none;"></div>
+
+                <div class="cta-benefits">
+                    <div class="benefit">
+                        <div class="benefit-icon">🚀</div>
+                        <h4>Tailored Solutions</h4>
+                        <p>Get a custom ParlerBox setup for your organization</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">💰</div>
+                        <h4>Priority Response</h4>
+                        <p>Fast-track your enterprise deployment</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">👥</div>
+                        <h4>Dedicated Support</h4>
+                        <p>Personalized onboarding and training</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let uploadedFiles = [];
+        let isTyping = false;
+
+        // DOM elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Sample responses for demo
+        const sampleResponses = [
+            "Based on the document, I can see that this appears to be a technical specification. The document discusses implementation details and requirements for the system.",
+            "Looking at the uploaded file, I found key information about the project's architecture. It follows a microservices pattern with API-first design principles.",
+            "From the document content, the main points seem to be about data processing workflows and integration requirements. There are specific mentions of REST API endpoints and authentication mechanisms.",
+            "The document appears to contain detailed instructions and code examples. It covers topics like error handling, database connections, and user interface components.",
+            "Analyzing the content, this seems to be a comprehensive guide covering best practices, implementation strategies, and troubleshooting tips for the system.",
+            "Based on the uploaded file, I can identify several key sections including introduction, requirements, implementation details, and testing procedures."
+        ];
+
+        // File upload functionality
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.size > 50 * 1024 * 1024) { // 50MB limit
+                    alert('File size must be less than 50MB');
+                    continue;
+                }
+                uploadedFiles.push(file);
+                displayFile(file);
+
+                // Simulate processing
+                setTimeout(() => {
+                    addMessage('assistant', `✅ ${file.name} has been processed and is ready for questions!`);
+                }, 1000);
+            }
+        }
+
+        function displayFile(file) {
+            fileList.innerHTML = '';
+
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <i class="fas ${getFileIcon(file.type)}"></i>
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">(${(file.size / 1024).toFixed(1)} KB)</span>
+                    <span class="remove-btn" onclick="removeFile(${index})">×</span>
+                `;
+                fileList.appendChild(fileItem);
+            });
+
+            if (uploadedFiles.length === 0) {
+                fileList.innerHTML = '<p style="color: #6c757d; font-size: 0.9rem;"><em>No files uploaded yet</em></p>';
+            }
+        }
+
+        function getFileIcon(mimeType) {
+            if (mimeType.includes('pdf')) return 'fa-file-pdf';
+            if (mimeType.includes('word') || mimeType.includes('document')) return 'fa-file-word';
+            if (mimeType.includes('text')) return 'fa-file-alt';
+            return 'fa-file';
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayFile(uploadedFiles);
+        }
+
+        // Chat functionality
+        messageInput.addEventListener('input', () => {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = messageInput.scrollHeight + 'px';
+
+            sendBtn.disabled = messageInput.value.trim().length === 0;
+        });
+
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || isTyping) return;
+
+            addMessage('user', message);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            sendBtn.disabled = true;
+
+            // Simulate typing indicator
+            showTypingIndicator();
+
+            // Simulate AI response
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = uploadedFiles.length > 0 ?
+                    sampleResponses[Math.floor(Math.random() * sampleResponses.length)] :
+                    "Please upload a document first, then I can help answer your questions about it!";
+                addMessage('assistant', response);
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function addMessage(type, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const messageText = document.createElement('div');
+            messageText.className = 'message-text';
+            messageText.innerHTML = type === 'assistant' ? `<strong>ParlerBox Assistant</strong><br>${text}` : text;
+
+            messageDiv.appendChild(messageText);
+            chatMessages.appendChild(messageDiv);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            isTyping = true;
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typingIndicator';
+
+            const typingText = document.createElement('div');
+            typingText.className = 'typing-indicator';
+            typingText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Thinking...';
+
+            typingDiv.appendChild(typingText);
+            chatMessages.appendChild(typingDiv);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+            isTyping = false;
+        }
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Contact form submission
+        async function submitContactForm(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('ctaSubmitBtn');
+            const emailInput = document.getElementById('ctaEmail');
+            const messageDiv = document.getElementById('ctaMessage');
+
+            const email = emailInput.value.trim();
+
+            if (!email) {
+                showMessage('Please enter an email address', 'error');
+                return;
+            }
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Thanks for registering, we will be in touch shortly.', 'success');
+                    emailInput.value = '';
+                } else {
+                    showMessage(data.message || 'Failed to send. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Contact form error:', error);
+                showMessage('An error occurred. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Contact Us';
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('ctaMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `cta-message ${type}`;
+            messageDiv.style.display = 'block';
+
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+
+</html>

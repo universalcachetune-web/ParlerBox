@@ -228,11 +228,20 @@ function App() {
 
   return (
     <div className="App">
+      {/* Floating particles for dynamic background */}
+      <div className="floating-particle"></div>
+      <div className="floating-particle"></div>
+      <div className="floating-particle"></div>
+      <div className="floating-particle"></div>
+      <div className="floating-particle"></div>
       <header className="header">
         <div className="header-container">
           <div className="logo-section">
-            <h1>ParlerBox</h1>
-            <p>Find answers knowing your data, safely inside your firewall</p>
+            <div className="logo-container">
+              <img src="/logo.webp" alt="ParlerBox Logo" className="logo-image" />
+              <h1>ParlerBox</h1>
+            </div>
+            <p>Bringing search to your office</p>
           </div>
           <nav className="nav">
             <button onClick={() => scrollToSection('home')} className="nav-link">Home</button>
@@ -241,6 +250,7 @@ function App() {
             <button onClick={() => scrollToSection('how-it-works')} className="nav-link">How It Works</button>
             <button onClick={() => scrollToSection('features')} className="nav-link">Features</button>
             <button onClick={() => scrollToSection('subscribe')} className="nav-link">Subscribe</button>
+            <button onClick={() => window.location.href = '/demo'} className="nav-link">Try Demo</button>
             <button onClick={() => scrollToSection('contact')} className="nav-link">Contact</button>
           </nav>
         </div>
